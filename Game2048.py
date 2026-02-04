@@ -1,6 +1,7 @@
 import pygame
 import random
 from Board import Board
+from Strategy import Strategy
 from collections import defaultdict
 
 class Game2048:
@@ -37,21 +38,59 @@ class Game2048:
         self.font = pygame.font.SysFont("arial", 36, bold=True)
 
         self.board = Board()
+        self.clearBoard()
         self.running = True
-
-        # key map for key handler
+        self.state = "Human"
+        self.strategy = Strategy(1)
+        
+        # key map for key handler and history logic
         self.key_map = defaultdict()
         
-        self.key_map[pygame.K_LEFT] = lambda : self.board.move(Board.LEFT)
-        self.key_map[pygame.K_RIGHT] = lambda : self.board.move(Board.RIGHT)
-        self.key_map[pygame.K_UP] = lambda : self.board.move(Board.UP)
-        self.key_map[pygame.K_DOWN] = lambda : self.board.move(Board.DOWN)
-        self.key_map[pygame.K_r] = lambda : self.board.reset()
+        self.key_map[pygame.K_LEFT] = lambda : self.makeMove(Board.LEFT)
+        self.key_map[pygame.K_RIGHT] = lambda : self.makeMove(Board.RIGHT)
+        self.key_map[pygame.K_UP] = lambda : self.makeMove(Board.UP)
+        self.key_map[pygame.K_DOWN] = lambda : self.makeMove(Board.DOWN)
+        self.key_map[pygame.K_r] = lambda : self.clearBoard()
+        self.key_map[pygame.K_u] = lambda : self.undo()
+        self.key_map[pygame.K_h] = lambda : self.printHist()
+        self.key_map[pygame.K_a] = lambda : self.switchState()
+        self.key_map[pygame.K_m] = lambda : self.stratMove()
 
     # board index helper
 
     def index(self, r, c):
         return r * self.SIZE + c
+    
+    # history logic
+    def addHist(self, newHist):
+        if newHist: self.history += newHist
+    
+    def makeMove(self, dir):
+        self.addHist(self.board.move(dir))
+
+    def clearBoard(self):
+        self.history = [self.board.reset()]
+
+    def undo(self):
+        if (len(self.history) > 2):
+            self.board.board = list(self.history[-3][1])
+            self.history.pop()
+            self.history.pop()
+    
+    def printHist(self):
+        print(f"History Length: {len(self.history)}")
+        for type, board in self.history:
+            print(f"Type: {type}, {board}")
+
+    # AI logic
+
+    def switchState(self):
+        if self.state == "Human": self.state = "AI"
+        elif self.state == "AI": self.state = "Human"
+
+    def stratMove(self):
+        move = self.strategy.next_move(self.board)
+        if move: self.makeMove(move)
 
     # handlers
 
@@ -89,8 +128,8 @@ class Game2048:
         # display board
         for r in range(self.SIZE):
             for c in range(self.SIZE):
-                pow = self.board.at(r,c)
-                value = 1 << pow if pow else 0
+                powVal = self.board.at(r,c)
+                value = 1 << powVal if powVal else 0
                 color = self.COLORS.get(value, (60, 58, 50))
 
                 x = self.PADDING + c * (self.TILE_SIZE + self.GAP)
@@ -109,6 +148,8 @@ class Game2048:
 def main():
     game = Game2048()
     clock = pygame.time.Clock()
+
+    print(Strategy.toInt(game.board))
 
     while game.running:
         game.handle_events()

@@ -20,20 +20,23 @@ class Board:
     def at(self, r, c):
         return self.board[self.index(r,c)]
     
+    def freeze(self):
+        return tuple(self.board)
+    
     # game logic
 
     def reset(self):
         self.board = [0] * (Board.SIZE * Board.SIZE)
         self.spawn_tile()
         self.spawn_tile()
-        self.history = [(Board.START, tuple(self.board))]
+        return (Board.START, self.freeze())
     
     def spawn_tile(self):
         empty = [i for i, v in enumerate(self.board) if v == 0]
         if empty:
             i = random.choice(empty)
             self.board[i] = 1 if random.random() < 0.9 else 2
-            self.history.append((Board.SPAWN, tuple(self.board)))
+            return (Board.SPAWN, self.freeze())
 
     def compress_and_merge(self, line):
         new = [x for x in line if x != 0]
@@ -50,6 +53,45 @@ class Board:
 
         merged += [0] * (Board.SIZE - len(merged))
         return merged
+    
+    def legalMoves(self):
+        legal = []
+        
+        def getLine(dir, place):
+            if dir in (Board.LEFT, Board.RIGHT):
+                idx = self.index(place, 0)
+                line = self.board[idx : idx+4]
+                return line[::-1] if dir == Board.RIGHT else line
+            else:
+                line = []
+                for k in range(4):
+                    idx = self.index(k, place)
+                    line.append(self.board[idx])
+                return line[::-1] if dir == Board.DOWN else line
+
+        def checkLine(line):
+            foundEmpty = False
+            foundVals = []
+            for val in line:
+                if val == 0: foundEmpty = True
+                elif foundEmpty: return True
+                elif val in foundVals: return True
+                
+                if val != 0: foundVals.append(val)
+            
+            return False
+        
+        def checkDir(dir):
+            for place in range(4):
+                line = getLine(dir, place)
+                if (checkLine(line)): return True
+            
+            return False
+        
+        for dir in [Board.UP, Board.DOWN, Board.LEFT, Board.RIGHT]:
+            if (checkDir(dir)): legal.append(dir)
+        
+        return legal
     
     def move(self, direction):
         moved = False
@@ -85,9 +127,12 @@ class Board:
             merged = self.compress_and_merge(original)
             set_line(i, merged)
 
+        newHist = []
         if moved:
-            self.history.append((direction, tuple(self.board)))
-            self.spawn_tile()
+            newHist.append((direction, self.freeze()))
+            newHist.append(self.spawn_tile())
+
+        return newHist
 
     def score(self):
         total = 0
