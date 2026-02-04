@@ -149,8 +149,6 @@ def main():
     game = Game2048()
     clock = pygame.time.Clock()
 
-    print(Strategy.toInt(game.board))
-
     while game.running:
         game.handle_events()
         game.draw()
