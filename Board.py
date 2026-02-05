@@ -55,16 +55,14 @@ class Board:
         return merged
     
     def legalMoves(self):
-        legal = []
-        
         def getLine(dir, place):
             if dir in (Board.LEFT, Board.RIGHT):
                 idx = self.index(place, 0)
-                line = self.board[idx : idx+4]
+                line = self.board[idx : idx + Board.SIZE]
                 return line[::-1] if dir == Board.RIGHT else line
             else:
                 line = []
-                for k in range(4):
+                for k in range(Board.SIZE):
                     idx = self.index(k, place)
                     line.append(self.board[idx])
                 return line[::-1] if dir == Board.DOWN else line
@@ -73,21 +71,22 @@ class Board:
             foundEmpty = False
             prevVal = -1
             for val in line:
-                if val == 0: foundEmpty = True
-                elif foundEmpty: return True
+                if val != 0 and foundEmpty: return True
                 elif val == prevVal: return True
 
-                if val != 0: prevVal = val
+                if val == 0: foundEmpty = True
+                else: prevVal = val
             
             return False
         
         def checkDir(dir):
-            for place in range(4):
+            for place in range(Board.SIZE):
                 line = getLine(dir, place)
                 if (checkLine(line)): return True
             
             return False
         
+        legal = []
         for dir in [Board.UP, Board.DOWN, Board.LEFT, Board.RIGHT]:
             if (checkDir(dir)): legal.append(dir)
         

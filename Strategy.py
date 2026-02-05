@@ -23,7 +23,7 @@ class Strategy:
         board = []
 
         # append the values in reverse order and reverse it later
-        for _ in range(16):
+        for _ in range(Board.SIZE ** 2):
             v = iBoard % (2 << 5)
             board.append(v)
             iBoard >>= 5
