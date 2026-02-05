@@ -9,6 +9,7 @@ class Strategy:
         legal = board.legalMoves()
         return random.choice(legal) if legal else None
 
+    # represents the board as an integer, using only 5 bits per tile to save memory
     def toInt(board):
         iBoard = 0
 

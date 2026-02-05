@@ -71,13 +71,13 @@ class Board:
 
         def checkLine(line):
             foundEmpty = False
-            foundVals = []
+            prevVal = -1
             for val in line:
                 if val == 0: foundEmpty = True
                 elif foundEmpty: return True
-                elif val in foundVals: return True
-                
-                if val != 0: foundVals.append(val)
+                elif val == prevVal: return True
+
+                if val != 0: prevVal = val
             
             return False
         

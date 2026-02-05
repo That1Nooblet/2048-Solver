@@ -108,6 +108,8 @@ class Game2048:
                 self.key_handler(event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_handler(event.pos, event.button)
+        
+        if (self.state == "AI"): self.stratMove()
 
     # draw handler
 
