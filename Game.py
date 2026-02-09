@@ -4,7 +4,7 @@ from Board import Board
 from Strategy import Strategy
 from collections import defaultdict
 
-class Game2048:
+class Game:
     SIZE = Board.SIZE
     SCORE_HEIGHT = 60
     TILE_SIZE = 120
@@ -148,7 +148,7 @@ class Game2048:
 
 # main game loop
 def main():
-    game = Game2048()
+    game = Game()
     clock = pygame.time.Clock()
 
     while game.running:

@@ -8,6 +8,7 @@ class Board:
     LEFT = 3
     RIGHT = 4
     SPAWN = 5
+    DIRECTIONS = [UP, DOWN, LEFT, RIGHT]
 
     def __init__(self):
         self.reset()
@@ -87,7 +88,7 @@ class Board:
             return False
         
         legal = []
-        for dir in [Board.UP, Board.DOWN, Board.LEFT, Board.RIGHT]:
+        for dir in Board.DIRECTIONS:
             if (checkDir(dir)): legal.append(dir)
         
         return legal
