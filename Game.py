@@ -52,9 +52,10 @@ class Game:
         self.key_map[pygame.K_DOWN] = lambda : self.makeMove(Board.DOWN)
         self.key_map[pygame.K_r] = lambda : self.clearBoard()
         self.key_map[pygame.K_u] = lambda : self.undo()
-        self.key_map[pygame.K_h] = lambda : self.printHist()
         self.key_map[pygame.K_a] = lambda : self.switchState()
         self.key_map[pygame.K_m] = lambda : self.stratMove()
+        self.key_map[pygame.K_h] = lambda : self.printHist()
+        self.key_map[pygame.K_l] = lambda : self.printLegal()
 
     # board index helper
 
@@ -91,6 +92,12 @@ class Game:
     def stratMove(self):
         move = self.strategy.next_move(self.board)
         if move: self.makeMove(move)
+
+    def printLegal(self):
+        iBoard = self.strategy.toInt(self.board)
+        legal = self.strategy.legalMoves(iBoard)
+        print(self.board.legalMoves())
+        print(legal)
 
     # handlers
 

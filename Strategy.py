@@ -12,7 +12,7 @@ class Strategy:
 
     # represents the board as an integer, using only 5 bits per tile to save memory
 
-    def toInt(board):
+    def toInt(self, board):
         iBoard = 0
 
         for v in board.board:
@@ -21,7 +21,7 @@ class Strategy:
 
         return iBoard
     
-    def toList(iBoard):
+    def toList(self, iBoard):
         board = []
 
         # append the values in reverse order and reverse it later
@@ -37,7 +37,7 @@ class Strategy:
         return r * Board.SIZE + c
     
     def bitPush(self, idx):
-        return (Board.SIZE ** 2) - (5 * idx)
+        return 5 * (Board.SIZE ** 2 - 1 - idx)
     
     def at1(self, iBoard, p):
         return (iBoard >> (self.bitPush(p))) % (1 << 5)
@@ -49,6 +49,7 @@ class Strategy:
     def update(self, iBoard, p, val):
         iBoard -= self.at1(iBoard, p) << self.bitPush(p)
         iBoard += val << self.bitPush(p)
+        return iBoard
 
     def spawn_tile(self, iBoard):
         empty = []
@@ -64,25 +65,37 @@ class Strategy:
             iBoard = self.update(iBoard, p, newVal)
             return iBoard
         
-    def legal_moves(self, iBoard):
+    def legalMoves(self, iBoard):
+        def reverseLine(line):
+            newLine = 0
+            for i in range(Board.SIZE):
+                newLine <<= 5
+                newLine += line % (1 << 5)
+                line >>= 5
+            
+            return newLine
+
         def getLine(dir, place):
+            # creates lines in reverse order so we must reverse when 
+            # the direction is LEFT or UP
             if dir in (Board.LEFT, Board.RIGHT):
-                idx = self.index(place, 0)
-                line = iBoard >> (5 * (Board.SIZE ** 2 - Board.SIZE))
-                line %= 1 << (5 * Board.SIZE)
-                return line
+                line = 0
+                for i in range(Board.SIZE):
+                    line <<= 5
+                    line += self.at2(iBoard, place, i)
+                return reverseLine(line) if dir == Board.LEFT else line
             else:
                 line = 0
-                for k in range(Board.SIZE):
+                for i in range(Board.SIZE):
                     line <<= 5
-                    line += self.at2(iBoard, k, place)
-                return line
+                    line += self.at2(iBoard, i, place)
+                return reverseLine(line) if dir == Board.UP else line
         
         def checkLine(line):
             foundEmpty = False
             prevVal = -1
             for i in range(Board.SIZE):
-                val = self.at1(iBoard, i)
+                val = (line >> (i * 5)) % (1 << 5)
                 if val != 0 and foundEmpty: return True
                 elif val == prevVal: return True
 
@@ -103,5 +116,4 @@ class Strategy:
             if (checkDir(dir)): legal.append(dir)
         
         return legal
-    
     
