@@ -11,13 +11,16 @@ class Strategy:
     def next_move(self, board):
         iBoard = IntBoard.toInt(board)
         cache = {}
+        cachesUsed = 0
 
         def dfs(iBoard, depth):
+            nonlocal cachesUsed
             # reached max depth
             if depth == self.depth:
                 return self.heuristic(iBoard), None
             # board already calculated at a depth <= current depth
             elif iBoard in cache and cache[iBoard][1] <= depth:
+                cachesUsed += 1
                 return cache[iBoard][0], None
             
             legal = IntBoard.legalMoves(iBoard)
@@ -52,6 +55,7 @@ class Strategy:
             return ev, bestDir
 
         _, bestMove = dfs(iBoard, 0)
+        print(cachesUsed)
         return bestMove
     
     def heuristic(self, iBoard):

@@ -42,7 +42,7 @@ class Game:
         self.clearBoard()
         self.running = True
         self.state = "Human"
-        self.strategy = Strategy(3)
+        self.strategy = Strategy(depth = 5, sample = 1)
         
         # key map for key handler and history logic
         self.key_map = defaultdict()
