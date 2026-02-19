@@ -2,6 +2,7 @@ import pygame
 import random
 from Board import Board
 from Strategy import Strategy
+from IntBoard import IntBoard
 from collections import defaultdict
 
 class Game:
@@ -41,7 +42,7 @@ class Game:
         self.clearBoard()
         self.running = True
         self.state = "Human"
-        self.strategy = Strategy(1)
+        self.strategy = Strategy(3)
         
         # key map for key handler and history logic
         self.key_map = defaultdict()
@@ -62,9 +63,9 @@ class Game:
         self.key_map[pygame.K_d] = lambda : self.bitTest(Board.RIGHT)
 
     def bitTest(self, dir):
-        iBoard = self.strategy.toInt(self.board)
-        iBoard = self.strategy.move(iBoard, dir)
-        self.board.board = self.strategy.toList(iBoard)
+        iBoard = IntBoard.toInt(self.board)
+        iBoard = IntBoard.move(iBoard, dir)
+        self.board.board = IntBoard.toList(iBoard)
 
     # board index helper
 
