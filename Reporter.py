@@ -35,11 +35,11 @@ class Reporter:
         return data
     
     def run(self, iterations):
-        with open("noCache.csv", "a", newline = '') as f:
+        with open("keepCache.csv", "a", newline = '') as f:
             fieldnames = ["AvgTime", "Score", "Moves", "AvgCaches", "HitRate"]
             writer = csv.DictWriter(f, fieldnames=fieldnames)
 
-            # writer.writeheader()
+            writer.writeheader()
             for _ in range(iterations):
                 data = self.runOne()
                 writer.writerow(data)
@@ -51,7 +51,7 @@ class Reporter:
 
 def main():
     report = Reporter()
-    report.run(5)
+    report.run(10)
 
 if __name__ == "__main__":
     main()
