@@ -93,7 +93,7 @@ class Board:
         
         return legal
     
-    def move(self, direction):
+    def shift(self, direction):
         moved = False
 
         def get_line(i):
@@ -126,6 +126,11 @@ class Board:
             original = get_line(i)
             merged = self.compress_and_merge(original)
             set_line(i, merged)
+
+        return moved
+    
+    def move(self, direction):
+        moved = self.shift(direction)
 
         newHist = []
         if moved:

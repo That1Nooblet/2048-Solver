@@ -144,9 +144,7 @@ class IntBoard:
         return legal
     
     @staticmethod
-    def move(iBoard, dir):
-        moved = False
-
+    def shift(iBoard, dir):
         def reverseLine(line):
             newLine = 0
             for i in range(Board.SIZE):
@@ -197,20 +195,15 @@ class IntBoard:
             return merged
         
         def setLine(iBoard, line, i):
-            nonlocal moved
             if dir in (Board.RIGHT, Board.DOWN):
                 line = reverseLine(line)
 
             if dir in (Board.LEFT, Board.RIGHT):
                 for c in range(Board.SIZE):
-                    if IntBoard.at2(iBoard, i, c) != IntBoard.lineAt(line, c):
-                        moved = True
                     lineVal = IntBoard.lineAt(line, c)
                     iBoard = IntBoard.update2(iBoard, lineVal, i, c)
             else:
                 for r in range(Board.SIZE):
-                    if IntBoard.at2(iBoard, r, i) != IntBoard.lineAt(line, r):
-                        moved = True
                     lineVal = IntBoard.lineAt(line, r)
                     iBoard = IntBoard.update2(iBoard, lineVal, r, i)
             
@@ -220,10 +213,13 @@ class IntBoard:
             original = getLine(i)
             merged = compressAndMerge(original)
             iBoard = setLine(iBoard, merged, i)
-        
-        if moved:
-            iBoard = IntBoard.spawn_tile(iBoard)
 
+        return iBoard
+    
+    @staticmethod
+    def move(iBoard, dir):
+        iBoard = IntBoard.shift(iBoard, dir)
+        iBoard = IntBoard.spawn_tile(iBoard)
         return iBoard
     
     @staticmethod

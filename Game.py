@@ -42,7 +42,7 @@ class Game:
         self.clearBoard()
         self.running = True
         self.state = "Human"
-        self.strategy = Strategy(depth = 5, sample = 1)
+        self.strategy = Strategy(depth = 3, sample = 8)
         
         # key map for key handler and history logic
         self.key_map = defaultdict()
@@ -57,15 +57,6 @@ class Game:
         self.key_map[pygame.K_m] = lambda : self.stratMove()
         self.key_map[pygame.K_h] = lambda : self.printHist()
         self.key_map[pygame.K_l] = lambda : self.printLegal()
-        self.key_map[pygame.K_w] = lambda : self.bitTest(Board.UP)
-        self.key_map[pygame.K_a] = lambda : self.bitTest(Board.LEFT)
-        self.key_map[pygame.K_s] = lambda : self.bitTest(Board.DOWN)
-        self.key_map[pygame.K_d] = lambda : self.bitTest(Board.RIGHT)
-
-    def bitTest(self, dir):
-        iBoard = IntBoard.toInt(self.board)
-        iBoard = IntBoard.move(iBoard, dir)
-        self.board.board = IntBoard.toList(iBoard)
 
     # board index helper
 
@@ -100,7 +91,7 @@ class Game:
         elif self.state == "AI": self.state = "Human"
 
     def stratMove(self):
-        move = self.strategy.next_move(self.board)
+        move, _, _ = self.strategy.next_move2(self.board)
         if move: self.makeMove(move)
 
     def printLegal(self):
