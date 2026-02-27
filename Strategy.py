@@ -8,12 +8,11 @@ class Strategy:
     def __init__(self, depth, sample = 8):
         self.depth = depth
         self.sample = sample
-        self.cache = {}
         self.snake = [16,15,14,13,9,10,11,12,8,7,6,5,1,2,3,4]
 
     def next_move1(self, board):
         iBoard = IntBoard.toInt(board)
-        cache = self.cache
+        cache = {}
         cachesUsed = 0
         cachesMissed = 0
 
