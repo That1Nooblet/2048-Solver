@@ -63,7 +63,7 @@ class Reporter:
 
 def main():
     report = Reporter()
-    report.run(2)
+    report.run(7)
 
 if __name__ == "__main__":
     main()
